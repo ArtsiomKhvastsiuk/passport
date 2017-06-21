@@ -21,11 +21,31 @@ passport.use(new localStrategy(
             if (!user.validPassword(password)) {
                 return done(null, false, {message: 'Incorrect password'});
             }
-
             return done(null, user);
         })
     }
 ));
+
+
+/* Token authorization */
+const jwtOptions = {
+    jwtFromRequest: extractJwt.fromAuthHeader(),
+    secret: 'secret'
+};
+
+passport.use(new jwtStrategy(jwtOptions, (payload, done) => {
+    User.findOne({_id: payload._id, username: payload.username, password: payload.password}, (error, user) => {
+        if (!user) {
+            return done(null, false);
+        }
+
+        if (error) {
+            return done(error);
+        }
+
+        return done(null, user);
+    })
+}));
 
 
 
