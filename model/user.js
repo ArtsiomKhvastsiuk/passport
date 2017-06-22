@@ -20,11 +20,7 @@ const UserSchema = new Schema({
 
 
 UserSchema.methods.validPassword = function(password) {
-    if (this.password !== password) {
-        return false;
-    }
-
-    return true;
-}
+    return this.password === password;
+};
 
 module.exports = mongoose.model('User', UserSchema);
